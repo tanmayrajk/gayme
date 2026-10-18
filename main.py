@@ -87,6 +87,11 @@ class AimReticle:
         self.dot.x = round(dot_x - 1)
         self.dot.y = round(dot_y - 1)
 
+def remove_sprite(scene, sprite):
+    for i in range(len(scene)):
+        if scene[i] is sprite:
+            scene.pop(i)
+            return
 
 player = Player(scene)
 reticle = AimReticle(scene, radius=10)
@@ -131,13 +136,27 @@ while running:
         projectile.update(dt)
         projectile.draw()
 
-        if projectile.is_offscreen(W, H):
-            for i in range(len(scene)):
-                if scene[i] is projectile.sprite:
-                    scene.pop(i)
+        if projectile.owner == "player":
+            hit_enemy = None
+
+            for enemy in enemies:
+                if projectile.collides_with(enemy):
+                    hit_enemy = enemy
                     break
 
+            if hit_enemy is not None:
+                remove_sprite(scene, projectile.sprite)
+                projectiles.remove(projectile)
+
+                remove_sprite(scene, hit_enemy.sprite)
+                enemies.remove(hit_enemy)
+
+                continue
+
+        if projectile.is_offscreen(W, H):
+            remove_sprite(scene, projectile.sprite)
             projectiles.remove(projectile)
+
 
     spawner.update(dt, player, enemies)
 

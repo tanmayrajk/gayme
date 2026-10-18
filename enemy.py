@@ -135,7 +135,8 @@ class ShooterEnemy(Enemy):
                 cy - 1.5,
                 self.angle,
                 speed=35.0,
-                color=0xFF3333
+                color=0xFF3333,
+                owner="enemy",
             )
 
             projecticles.append(bullet)

@@ -2,7 +2,7 @@ import displayio
 import math
 
 class Projectile:
-    def __init__(self, scene, x, y, angle, speed=80.0, color=0xFFAA00):
+    def __init__(self, scene, x, y, angle, speed=80.0, color=0xFFAA00, owner="player"):
         self.x = float(x)
         self.y = float(y)
 
@@ -10,6 +10,7 @@ class Projectile:
         self.height = 3
         self.speed = speed
         self.angle = angle
+        self.owner = owner
 
         radians = math.radians(self.angle)
         self.dx = math.cos(radians)
@@ -46,4 +47,12 @@ class Projectile:
             or self.x > screen_width
             or self.y + self.height < 0
             or self.y > screen_height
+        )
+
+    def collides_with(self, target):
+        return (
+            self.x < target.x + target.width
+            and self.x + self.width > target.x
+            and self.y < target.y + target.height
+            and self.y + self.height > target.y
         )
