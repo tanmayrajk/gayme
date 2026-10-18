@@ -2,13 +2,13 @@ import displayio
 import math
 
 class Projectile:
-    def __init__(self, scene, x, y, angle):
+    def __init__(self, scene, x, y, angle, speed=80.0, color=0xFFAA00):
         self.x = float(x)
         self.y = float(y)
 
         self.width = 3
         self.height = 3
-        self.speed = 80.0
+        self.speed = speed
         self.angle = angle
 
         radians = math.radians(self.angle)
@@ -17,7 +17,7 @@ class Projectile:
 
         bitmap = displayio.Bitmap(self.width, self.height, 1)
         palette = displayio.Palette(1)
-        palette[0] = 0xFFAA00
+        palette[0] = color
 
         for py in range(self.height):
             for px in range(self.width):

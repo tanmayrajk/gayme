@@ -6,8 +6,9 @@ import math
 from pygame.mixer_music import play
 
 from player import Player
-from enemy import Enemy
+from enemy import ChaserEnemy, ShooterEnemy
 from projectile import Projectile
+from enemy_spawner import EnemySpawner
 
 SCALE = 4
 W = 128
@@ -90,7 +91,8 @@ class AimReticle:
 player = Player(scene)
 reticle = AimReticle(scene, radius=10)
 
-enemy = Enemy(scene, x=10, y=10)
+enemies = []
+spawner = EnemySpawner(scene, W, H)
 
 projectiles = []
 
@@ -137,8 +139,15 @@ while running:
 
             projectiles.remove(projectile)
 
-    enemy.update(dt, player)
-    enemy.draw()
+    spawner.update(dt, player, enemies)
+
+    for enemy in enemies:
+        if isinstance(enemy, ChaserEnemy):
+            enemy.update(dt, player)
+        elif isinstance(enemy, ShooterEnemy):
+            enemy.update(dt, player, projectiles)
+
+        enemy.draw()
 
     reticle.update(player.x + player.width / 2, player.y + player.height / 2, player.angle)
 
