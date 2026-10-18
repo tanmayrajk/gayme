@@ -101,6 +101,8 @@ spawner = EnemySpawner(scene, W, H)
 
 projectiles = []
 
+score = 0
+
 while running:
     dt = clock.tick(60) / 1000
 
@@ -150,6 +152,13 @@ while running:
 
                 remove_sprite(scene, hit_enemy.sprite)
                 enemies.remove(hit_enemy)
+
+                if isinstance(hit_enemy, ChaserEnemy):
+                    score += 10
+                elif isinstance(hit_enemy, ShooterEnemy):
+                    score += 20
+
+                print(f"score: {score}")
 
                 continue
 
