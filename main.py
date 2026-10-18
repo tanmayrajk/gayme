@@ -105,10 +105,16 @@ while running:
             center_x = player.x + player.width / 2
             center_y = player.y + player.height / 2
 
+            radians = math.radians(player.angle)
+            radius = reticle.radius
+
+            spawn_x = center_x + math.cos(radians) * radius
+            spawn_y = center_y + math.sin(radians) * radius
+
             projectile = Projectile(
                 scene,
-                center_x - 1.5,
-                center_y - 1.5,
+                spawn_x - 1.5,
+                spawn_y - 1.5,
                 player.angle
             )
 
