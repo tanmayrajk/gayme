@@ -3,8 +3,11 @@ import displayio
 import pygame
 import math
 
+from pygame.mixer_music import play
+
 from player import Player
 from enemy import Enemy
+from projectile import Projectile
 
 SCALE = 4
 W = 128
@@ -89,6 +92,8 @@ reticle = AimReticle(scene, radius=10)
 
 enemy = Enemy(scene, x=10, y=10)
 
+projectiles = []
+
 while running:
     dt = clock.tick(60) / 1000
 
@@ -96,14 +101,35 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            dx, dy = player.get_direction()
-            print(f"dir: ({dx:.2f}, {dy:.2f})")
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_j:
+            center_x = player.x + player.width / 2
+            center_y = player.y + player.height / 2
+
+            projectile = Projectile(
+                scene,
+                center_x - 1.5,
+                center_y - 1.5,
+                player.angle
+            )
+
+            projectiles.append(projectile)
 
     keys = pygame.key.get_pressed()
 
     player.update(dt, keys)
     player.draw()
+
+    for projectile in projectiles[:]:
+        projectile.update(dt)
+        projectile.draw()
+
+        if projectile.is_offscreen(W, H):
+            for i in range(len(scene)):
+                if scene[i] is projectile.sprite:
+                    scene.pop(i)
+                    break
+
+            projectiles.remove(projectile)
 
     enemy.update(dt, player)
     enemy.draw()
