@@ -1,8 +1,10 @@
 from blinka_displayio_pygamedisplay import PyGameDisplay
-from player import Player
 import displayio
 import pygame
 import math
+
+from player import Player
+from enemy import Enemy
 
 SCALE = 4
 W = 128
@@ -85,6 +87,8 @@ class AimReticle:
 player = Player(scene)
 reticle = AimReticle(scene, radius=10)
 
+enemy = Enemy(scene, x=10, y=10)
+
 while running:
     dt = clock.tick(60) / 1000
 
@@ -100,6 +104,9 @@ while running:
 
     player.update(dt, keys)
     player.draw()
+
+    enemy.update(dt, player)
+    enemy.draw()
 
     reticle.update(player.x + player.width / 2, player.y + player.height / 2, player.angle)
 

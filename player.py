@@ -9,7 +9,7 @@ class Player:
         self.width = 9
         self.height = 9
         self.angle = 0.0
-        self.rotation_speed = 180.0
+        self.rotation_speed = 360.0
 
         bitmap = displayio.Bitmap(self.width, self.height, 2)
 
