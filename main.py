@@ -10,6 +10,8 @@ from enemy import ChaserEnemy, ShooterEnemy
 from projectile import Projectile
 from enemy_spawner import EnemySpawner
 
+from sprites import load_background
+
 SCALE = 4
 W = 128
 H = 128
@@ -22,6 +24,9 @@ display = PyGameDisplay(
 
 scene = displayio.Group(scale=SCALE)
 display.root_group = scene
+
+background = load_background("assets/bg.png")
+scene.append(background)
 
 clock = pygame.time.Clock()
 running = True
