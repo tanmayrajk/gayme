@@ -5,7 +5,7 @@ from projectile import Projectile
 from sprites import load_spritesheet
 
 class Enemy:
-    def __init__(self, scene, x=0, y=0, color=0xFF0000) -> None:
+    def __init__(self, scene, x=0, y=0, sprite_path=None) -> None:
         self.x = float(x)
         self.y = float(y)
 
@@ -16,34 +16,24 @@ class Enemy:
 
         self._scene = scene
 
-        bitmap = displayio.Bitmap(self.width, self.height, 2)
-        palette = displayio.Palette(2)
-
-        palette[0] = 0x000000
-        palette[1] = color
-        palette.make_transparent(0)
-
-        for py in range(self.height):
-            for px in range(self.width):
-                bitmap[px, py] = 1
-
-        self.sprite = displayio.TileGrid(
-            bitmap,
-            pixel_shader=palette,
-            x=int(self.x),
-            y=int(self.y)
-        )
+        if sprite_path is not None:
+            self.sprite, self.frame_count = load_spritesheet(sprite_path)
+        else:
+            raise ValueError("uh you need a sprite")
 
         scene.append(self.sprite)
 
     def draw(self):
+        direction = round(self.angle / 90) % 4
+        self.sprite[0] = direction
+
         self.sprite.x = round(self.x)
         self.sprite.y = round(self.y)
 
 
 class ChaserEnemy(Enemy):
     def __init__(self, scene, x=0, y=0):
-        super().__init__(scene, x, y, color=0xFF5555)
+        super().__init__(scene, x, y, sprite_path="assets/running_dude.png")
         self.speed = 35.0
 
     def update(self, dt, player):
@@ -66,7 +56,7 @@ class ChaserEnemy(Enemy):
 
 class ShooterEnemy(Enemy):
     def __init__(self, scene, x, y, player, screen_width, screen_height):
-        super().__init__(scene, x, y, color=0xBB66FF)
+        super().__init__(scene, x, y, sprite_path="assets/shooting_dude.png")
 
         self.speed = 20.0
 
