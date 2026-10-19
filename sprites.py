@@ -1,6 +1,27 @@
 import displayio
 from PIL import Image
 
+def load_background(path):
+    image = Image.open(path).convert("RGB")
+    width, height = image.size
+
+    colors = list(dict.fromkeys(image.getdata()))
+    palette = displayio.Palette(len(colors))
+
+    color_indices = {}
+
+    for index, (r, g, b) in enumerate(colors):
+        palette[index] = (r << 16) | (g << 8) | b
+        color_indices[(r, g, b)] = index
+
+    bitmap = displayio.Bitmap(width, height, len(colors))
+
+    for y in range(height):
+        for x in range(width):
+            bitmap[x, y] = color_indices[image.getpixel((x, y))]
+
+    return displayio.TileGrid(bitmap, pixel_shader=palette)
+
 def load_spritesheet(path, frame_width=9, frame_height=9):
     image = Image.open(path).convert("RGBA")
     width, height = image.size
