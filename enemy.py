@@ -1,10 +1,8 @@
-import displayio
 import math
 import random
 
-from pygame.cursors import sizer_x_strings
-
 from projectile import Projectile
+from sprites import load_spritesheet
 
 class Enemy:
     def __init__(self, scene, x=0, y=0, color=0xFF0000) -> None:

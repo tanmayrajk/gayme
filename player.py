@@ -1,6 +1,7 @@
 import displayio
 import pygame
 import math
+from sprites import load_spritesheet
 
 class Player:
     def __init__(self, scene, x=60, y=60) -> None:
@@ -22,12 +23,18 @@ class Player:
             for px in range(self.width):
                 bitmap[px, py] = 1
 
-        self.sprite = displayio.TileGrid(
-            bitmap,
-            pixel_shader=palette,
-            x=int(self.x),
-            y=int(self.y),
+        # self.sprite = displayio.TileGrid(
+        #     bitmap,
+        #     pixel_shader=palette,
+        #     x=int(self.x),
+        #     y=int(self.y),
+        # )
+
+        self.sprite, self.frame_count = load_spritesheet(
+            "assets/playa.png"
         )
+
+        self.sprite[0]
 
         scene.append(self.sprite)
 
@@ -39,6 +46,9 @@ class Player:
             self.angle += self.rotation_speed * dt
 
         self.angle %= 360
+
+        direction = round(self.angle / 90) % 4
+        self.sprite[0] = direction
 
     def draw(self):
         self.sprite.x = round(self.x)
