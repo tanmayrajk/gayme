@@ -11,14 +11,20 @@ the plan is to eventually have a basic home, app drawer and a game. at the time 
 - a desktop kinda home thingy (to be implemented)
 - an app drawer (to be implemented)
 - the game (being implemented)
-  - main menu (to be implemented)
   - player
   - enemies (chaser and shooter)
-  - score (it's implemented but not on the ui side)
-  - lose menu (to be implemented, the game just ends when player dies)
   - shooting
   - sprites
   - aabb collision in bullets and enemies and all that
+  - png to bmp conversion
+  - score (it's implemented but not on the ui side)
+  - main menu (to be implemented)
+  - lose menu (to be implemented, the game just ends when player dies)
+
+## how to play
+
+- use arrow keys (left and right) OR A and D keys to rotate the player's gun
+- use J to shoot enemies 
 
 ## how to build
 
