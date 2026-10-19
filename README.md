@@ -24,6 +24,12 @@ the plan is to eventually have a basic home, app drawer and a game. at the time 
 
 the ui is built using circuitpython and displayio BUT it runs on computer using pygame. eventually when we physically build the thing, we'll swap out the keyboard inputs and stuff for actual physical buttons with gpios and stuff. so right now you can just clone the repo, install the dependencies and just run the main file with python.
 
+## repos
+
+the whole project is divided between two repos.
+- this one is the software side
+- and [sage](https://github.com/istoocold/sage) is the hardware
+
 ## ai usage
 
 used ai here and there for figuring out how the hell displayio works.
