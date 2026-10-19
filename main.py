@@ -12,7 +12,7 @@ from enemy_spawner import EnemySpawner
 
 from sprites import load_background
 
-SCALE = 4
+SCALE = 1
 W = 128
 H = 128
 
@@ -110,6 +110,7 @@ score = 0
 
 while running:
     dt = clock.tick(60) / 1000
+    print(f"FPS: {clock.get_fps(): 1f}", end="\r")
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
