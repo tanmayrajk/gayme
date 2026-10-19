@@ -19,7 +19,7 @@ H = 128
 display = PyGameDisplay(
     width=W*SCALE,
     height=H*SCALE,
-    caption="windo"
+    caption="windwhg repodo"
 )
 
 scene = displayio.Group(scale=SCALE)
@@ -98,6 +98,14 @@ def remove_sprite(scene, sprite):
             scene.pop(i)
             return
 
+def collides(a, b):
+    return (
+        a.x < b.x + b.width
+        and a.x + a.width > b.x
+        and a.y < b.y + b.height
+        and a.y + a.height > b.y
+    )
+
 player = Player(scene)
 reticle = AimReticle(scene, radius=10)
 
@@ -144,6 +152,11 @@ while running:
         projectile.update(dt)
         projectile.draw()
 
+        if projectile.owner == "enemy" and collides(player, projectile):
+            print("wraps bruh")
+            running = False
+            break
+
         if projectile.owner == "player":
             hit_enemy = None
 
@@ -182,6 +195,11 @@ while running:
             enemy.update(dt, player, projectiles)
 
         enemy.draw()
+
+        if collides(player, enemy):
+            print("wraps")
+            running = False
+            break
 
     reticle.update(player.x + player.width / 2, player.y + player.height / 2, player.angle)
 

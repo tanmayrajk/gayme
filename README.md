@@ -14,7 +14,7 @@ the plan is to eventually have a basic home, app drawer and a game. at the time 
   - main menu (to be implemented)
   - player
   - enemies (chaser and shooter)
-  - score
+  - score (it's implemented but not on the ui side)
   - lose menu (to be implemented, the game just ends when player dies)
   - shooting
   - sprites
