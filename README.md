@@ -1,5 +1,7 @@
 # sageui
 
+![cover](assets/cover.png)
+
 this is the software side of [sage](https://github.com/istoocold/sage), a mini game esp32 based game console we're building.
 
 the plan is to eventually have a basic home, app drawer and a game. at the time of writing this, i'm working on the game.
