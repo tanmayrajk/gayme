@@ -9,6 +9,7 @@ from player import Player
 from enemy import ChaserEnemy, ShooterEnemy
 from projectile import Projectile
 from enemy_spawner import EnemySpawner
+from explosion import Explosion
 
 from sprites import load_background
 
@@ -114,6 +115,8 @@ spawner = EnemySpawner(scene, W, H)
 
 projectiles = []
 
+explosions = []
+
 score = 0
 
 while running:
@@ -169,6 +172,13 @@ while running:
                 remove_sprite(scene, projectile.sprite)
                 projectiles.remove(projectile)
 
+                explosion_x = hit_enemy.x
+                explosion_y = hit_enemy.y
+
+                explosions.append(
+                    Explosion(scene, explosion_x, explosion_y)
+                )
+
                 remove_sprite(scene, hit_enemy.sprite)
                 enemies.remove(hit_enemy)
 
@@ -200,6 +210,12 @@ while running:
             print("wraps")
             running = False
             break
+
+    for explosion in explosions[:]:
+        explosion.update(dt)
+
+        if explosion.finished:
+            explosions.remove(explosion)
 
     reticle.update(player.x + player.width / 2, player.y + player.height / 2, player.angle)
 
