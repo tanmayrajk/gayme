@@ -10,10 +10,11 @@ from enemy import ChaserEnemy, ShooterEnemy
 from projectile import Projectile
 from enemy_spawner import EnemySpawner
 from explosion import Explosion
+from bullet_explosion import BulletExplosion
 
 from sprites import load_background
 
-SCALE = 1
+SCALE = 2
 W = 128
 H = 128
 
@@ -172,6 +173,11 @@ while running:
                     break
 
             if hit_bullet is not None:
+                explosion_x = (projectile.x + hit_bullet.x) / 2
+                explosion_y = (projectile.y + hit_bullet.y) / 2
+
+                explosions.append(BulletExplosion(scene, explosion_x, explosion_y))
+
                 remove_sprite(scene, projectile.sprite)
                 projectiles.remove(projectile)
 
