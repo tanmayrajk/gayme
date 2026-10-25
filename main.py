@@ -111,6 +111,9 @@ def collides(a, b):
 def damage_player():
     global health, running
 
+    if not player.take_damage():
+        return
+
     health -= 1
     print(f"bruh {health}/{max_health}")
 
@@ -162,6 +165,7 @@ while running:
     keys = pygame.key.get_pressed()
 
     player.update(dt, keys)
+    player.update_hit_effect(dt)
     player.draw()
 
     for projectile in projectiles[:]:

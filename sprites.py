@@ -22,7 +22,7 @@ def load_background(path):
 
     return displayio.TileGrid(bitmap, pixel_shader=palette)
 
-def load_spritesheet(path, frame_width=9, frame_height=9):
+def load_spritesheet(path, frame_width=9, frame_height=9, return_palette=False):
     image = Image.open(path).convert("RGBA")
     width, height = image.size
 
@@ -51,5 +51,8 @@ def load_spritesheet(path, frame_width=9, frame_height=9):
         tile_width=frame_width,
         tile_height=frame_height
     )
+
+    if return_palette:
+        return grid, width // frame_width, palette
 
     return grid, width // frame_width
