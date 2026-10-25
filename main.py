@@ -108,6 +108,16 @@ def collides(a, b):
         and a.y + a.height > b.y
     )
 
+def damage_player():
+    global health, running
+
+    health -= 1
+    print(f"bruh {health}/{max_health}")
+
+    if health <= 0:
+        print("scientists reveal the bye")
+        running = False
+
 player = Player(scene)
 reticle = AimReticle(scene, radius=10)
 
@@ -119,6 +129,8 @@ projectiles = []
 explosions = []
 
 score = 0
+max_health = 3
+health = max_health
 
 while running:
     dt = clock.tick(60) / 1000
@@ -157,9 +169,11 @@ while running:
         projectile.draw()
 
         if projectile.owner == "enemy" and collides(player, projectile):
-            print("wraps bruh")
-            running = False
-            break
+            damage_player()
+
+            remove_sprite(scene, projectile.sprite)
+            projectiles.remove(projectile)
+            continue
 
         if projectile.owner == "player":
             hit_bullet = None
@@ -233,8 +247,10 @@ while running:
         enemy.draw()
 
         if collides(player, enemy):
-            print("wraps")
-            running = False
+            damage_player()
+
+            remove_sprite(scene, enemy.sprite)
+            enemies.remove(enemy)
             break
 
     for explosion in explosions[:]:
