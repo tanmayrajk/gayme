@@ -5,12 +5,14 @@ import math
 
 from pygame.mixer_music import play
 
+import heart_hud
 from player import Player
 from enemy import ChaserEnemy, ShooterEnemy
 from projectile import Projectile
 from enemy_spawner import EnemySpawner
 from explosion import Explosion
 from bullet_explosion import BulletExplosion
+from heart_hud import HeartHUD
 
 from sprites import load_background
 
@@ -115,6 +117,7 @@ def damage_player():
         return
 
     health -= 1
+    heart_hud.set_health(health)
     print(f"bruh {health}/{max_health}")
 
     if health <= 0:
@@ -132,8 +135,10 @@ projectiles = []
 explosions = []
 
 score = 0
+
 max_health = 3
 health = max_health
+heart_hud = heart_hud.HeartHUD(scene, max_health)
 
 while running:
     dt = clock.tick(60) / 1000
