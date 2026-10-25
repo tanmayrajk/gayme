@@ -161,6 +161,26 @@ while running:
             break
 
         if projectile.owner == "player":
+            hit_bullet = None
+
+            for other in projectiles:
+                if other is projectile:
+                    continue
+
+                if other.owner == "enemy" and projectile.collides_with(other):
+                    hit_bullet = other
+                    break
+
+            if hit_bullet is not None:
+                remove_sprite(scene, projectile.sprite)
+                projectiles.remove(projectile)
+
+                remove_sprite(scene, hit_bullet.sprite)
+                projectiles.remove(hit_bullet)
+
+                continue
+
+        if projectile.owner == "player":
             hit_enemy = None
 
             for enemy in enemies:
