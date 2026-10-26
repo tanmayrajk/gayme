@@ -13,6 +13,7 @@ from enemy_spawner import EnemySpawner
 from explosion import Explosion
 from bullet_explosion import BulletExplosion
 from heart_hud import HeartHUD
+from menu import TitleMenu
 
 from sprites import load_background
 
@@ -23,7 +24,7 @@ H = 128
 display = PyGameDisplay(
     width=W*SCALE,
     height=H*SCALE,
-    caption="windwhg repodo"
+    caption="gayme"
 )
 
 scene = displayio.Group(scale=SCALE)
@@ -31,6 +32,8 @@ display.root_group = scene
 
 background = load_background("assets/bg.png")
 scene.append(background)
+
+menu = TitleMenu(scene, W, H)
 
 clock = pygame.time.Clock()
 running = True
@@ -127,6 +130,10 @@ def damage_player():
 player = Player(scene)
 reticle = AimReticle(scene, radius=10)
 
+player.sprite.hidden = True
+reticle.circle.hidden = True
+reticle.dot.hidden = True
+
 enemies = []
 spawner = EnemySpawner(scene, W, H)
 
@@ -148,7 +155,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        elif event.type == pygame.KEYDOWN and event.key == pygame.K_j:
+        elif menu.state == "playing" and event.type == pygame.KEYDOWN and event.key == pygame.K_j:
             center_x = player.x + player.width / 2
             center_y = player.y + player.height / 2
 
@@ -167,108 +174,121 @@ while running:
 
             projectiles.append(projectile)
 
-    keys = pygame.key.get_pressed()
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            menu.start_game()
 
-    player.update(dt, keys)
-    player.update_hit_effect(dt)
-    player.draw()
+    menu.update(dt)
 
-    for projectile in projectiles[:]:
-        projectile.update(dt)
-        projectile.draw()
+    if menu.state == "done":
+        player.sprite.hidden = False
+        reticle.circle.hidden = False
+        reticle.dot.hidden = False
 
-        if projectile.owner == "enemy" and collides(player, projectile):
-            damage_player()
+        menu.state = "playing"
 
-            remove_sprite(scene, projectile.sprite)
-            projectiles.remove(projectile)
-            continue
+    if menu.state == "playing":
+        keys = pygame.key.get_pressed()
 
-        if projectile.owner == "player":
-            hit_bullet = None
+        player.update(dt, keys)
+        player.update_hit_effect(dt)
+        player.draw()
 
-            for other in projectiles:
-                if other is projectile:
+        for projectile in projectiles[:]:
+            projectile.update(dt)
+            projectile.draw()
+
+            if projectile.owner == "enemy" and collides(player, projectile):
+                damage_player()
+
+                remove_sprite(scene, projectile.sprite)
+                projectiles.remove(projectile)
+                continue
+
+            if projectile.owner == "player":
+                hit_bullet = None
+
+                for other in projectiles:
+                    if other is projectile:
+                        continue
+
+                    if other.owner == "enemy" and projectile.collides_with(other):
+                        hit_bullet = other
+                        break
+
+                if hit_bullet is not None:
+                    explosion_x = (projectile.x + hit_bullet.x) / 2
+                    explosion_y = (projectile.y + hit_bullet.y) / 2
+
+                    explosions.append(BulletExplosion(scene, explosion_x, explosion_y))
+
+                    remove_sprite(scene, projectile.sprite)
+                    projectiles.remove(projectile)
+
+                    remove_sprite(scene, hit_bullet.sprite)
+                    projectiles.remove(hit_bullet)
+
                     continue
 
-                if other.owner == "enemy" and projectile.collides_with(other):
-                    hit_bullet = other
-                    break
+            if projectile.owner == "player":
+                hit_enemy = None
 
-            if hit_bullet is not None:
-                explosion_x = (projectile.x + hit_bullet.x) / 2
-                explosion_y = (projectile.y + hit_bullet.y) / 2
+                for enemy in enemies:
+                    if projectile.collides_with(enemy):
+                        hit_enemy = enemy
+                        break
 
-                explosions.append(BulletExplosion(scene, explosion_x, explosion_y))
+                if hit_enemy is not None:
+                    remove_sprite(scene, projectile.sprite)
+                    projectiles.remove(projectile)
 
+                    explosion_x = hit_enemy.x
+                    explosion_y = hit_enemy.y
+
+                    explosions.append(
+                        Explosion(scene, explosion_x, explosion_y)
+                    )
+
+                    remove_sprite(scene, hit_enemy.sprite)
+                    enemies.remove(hit_enemy)
+
+                    if isinstance(hit_enemy, ChaserEnemy):
+                        score += 10
+                    elif isinstance(hit_enemy, ShooterEnemy):
+                        score += 20
+
+                    print(f"score: {score}")
+
+                    continue
+
+            if projectile.is_offscreen(W, H):
                 remove_sprite(scene, projectile.sprite)
                 projectiles.remove(projectile)
 
-                remove_sprite(scene, hit_bullet.sprite)
-                projectiles.remove(hit_bullet)
 
-                continue
+        spawner.update(dt, player, enemies)
 
-        if projectile.owner == "player":
-            hit_enemy = None
+        for enemy in enemies:
+            if isinstance(enemy, ChaserEnemy):
+                enemy.update(dt, player)
+            elif isinstance(enemy, ShooterEnemy):
+                enemy.update(dt, player, projectiles)
 
-            for enemy in enemies:
-                if projectile.collides_with(enemy):
-                    hit_enemy = enemy
-                    break
+            enemy.draw()
 
-            if hit_enemy is not None:
-                remove_sprite(scene, projectile.sprite)
-                projectiles.remove(projectile)
+            if collides(player, enemy):
+                damage_player()
 
-                explosion_x = hit_enemy.x
-                explosion_y = hit_enemy.y
+                remove_sprite(scene, enemy.sprite)
+                enemies.remove(enemy)
+                break
 
-                explosions.append(
-                    Explosion(scene, explosion_x, explosion_y)
-                )
+        for explosion in explosions[:]:
+            explosion.update(dt)
 
-                remove_sprite(scene, hit_enemy.sprite)
-                enemies.remove(hit_enemy)
+            if explosion.finished:
+                explosions.remove(explosion)
 
-                if isinstance(hit_enemy, ChaserEnemy):
-                    score += 10
-                elif isinstance(hit_enemy, ShooterEnemy):
-                    score += 20
-
-                print(f"score: {score}")
-
-                continue
-
-        if projectile.is_offscreen(W, H):
-            remove_sprite(scene, projectile.sprite)
-            projectiles.remove(projectile)
-
-
-    spawner.update(dt, player, enemies)
-
-    for enemy in enemies:
-        if isinstance(enemy, ChaserEnemy):
-            enemy.update(dt, player)
-        elif isinstance(enemy, ShooterEnemy):
-            enemy.update(dt, player, projectiles)
-
-        enemy.draw()
-
-        if collides(player, enemy):
-            damage_player()
-
-            remove_sprite(scene, enemy.sprite)
-            enemies.remove(enemy)
-            break
-
-    for explosion in explosions[:]:
-        explosion.update(dt)
-
-        if explosion.finished:
-            explosions.remove(explosion)
-
-    reticle.update(player.x + player.width / 2, player.y + player.height / 2, player.angle)
+        reticle.update(player.x + player.width / 2, player.y + player.height / 2, player.angle)
 
     display.refresh()
 
