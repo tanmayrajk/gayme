@@ -5,6 +5,7 @@ import math
 
 from pygame.mixer_music import play
 
+import game_over
 import heart_hud
 from player import Player
 from enemy import ChaserEnemy, ShooterEnemy
@@ -14,6 +15,7 @@ from explosion import Explosion
 from bullet_explosion import BulletExplosion
 from heart_hud import HeartHUD
 from menu import TitleMenu
+from game_over import GameOverScreen
 
 from sprites import load_background
 
@@ -34,6 +36,9 @@ background = load_background("assets/bg.png")
 scene.append(background)
 
 menu = TitleMenu(scene, W, H)
+
+game_over_screen = GameOverScreen(scene, W, H)
+game_over_screen.sprite.hidden = True
 
 clock = pygame.time.Clock()
 running = True
@@ -125,7 +130,8 @@ def damage_player():
 
     if health <= 0:
         print("scientists reveal the bye")
-        running = False
+        menu.state = "game_over"
+        game_over_screen.show()
 
 player = Player(scene)
 reticle = AimReticle(scene, radius=10)
@@ -178,7 +184,11 @@ while running:
             projectiles.append(projectile)
 
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-            menu.start_game()
+            if menu.state == "waiting":
+                menu.start_game()
+
+            elif menu.state == "game_over":
+                game_over_screen.start_restart()
 
     menu.update(dt)
 
@@ -191,6 +201,46 @@ while running:
             heart.hidden = False
 
         menu.state = "playing"
+
+    if menu.state == "game_over":
+        game_over_screen.update(dt)
+
+        if game_over_screen.state == "done":
+            health = max_health
+            score = 0
+            heart_hud.set_health(health)
+
+            player.x = 60
+            player.y = 60
+            player.angle = 0
+            player.is_invincible = False
+            player.is_flashing = False
+            player.invincible_timer = 0
+            player.flash_timer = 0
+            player.blink_timer = 0
+            player.blink_visible = True
+            player.sprite.hidden = False
+
+            for i in range(1, len(player.palette)):
+                player.palette[i] = player.original_colors[i]
+
+            for enemy in enemies[:]:
+                remove_sprite(scene, enemy.sprite)
+            enemies.clear()
+
+            for explosion in explosions[:]:
+                remove_sprite(scene, explosion.sprite)
+            explosions.clear()
+
+            spawner.spawn_timer = spawner.spawn_interval
+
+            reticle.circle.hidden = False
+            reticle.dot.hidden = False
+
+            for heart in heart_hud.hearts:
+                heart.hidden = False
+
+            menu.state = "playing"
 
     if menu.state == "playing":
         keys = pygame.key.get_pressed()
