@@ -12,14 +12,17 @@ the plan is to eventually have a basic home, app drawer and a game. at the time 
 - an app drawer (to be implemented)
 - the game (being implemented)
   - player
-  - enemies (chaser and shooter)
+  - multiple enemies (chaser and shooter)
+  - enemy spawning
   - shooting
   - sprites
   - aabb collision in bullets and enemies and all that
   - png to bmp conversion
-  - score (it's implemented but not on the ui side)
-  - main menu (to be implemented)
-  - lose menu (to be implemented, the game just ends when player dies)
+  - score
+  - main menu
+  - game over screen
+  - health hearts
+  - explosion and hit effects
 
 ## how to play
 
