@@ -16,6 +16,7 @@ from bullet_explosion import BulletExplosion
 from heart_hud import HeartHUD
 from menu import TitleMenu
 from game_over import GameOverScreen
+from score_hud import ScoreHUD
 
 from sprites import load_background
 
@@ -153,6 +154,9 @@ max_health = 3
 health = max_health
 heart_hud = heart_hud.HeartHUD(scene, max_health)
 
+score_hud = ScoreHUD(scene)
+score_hud.sprite.hidden = True
+
 for heart in heart_hud.hearts:
     heart.hidden = True
 
@@ -200,6 +204,8 @@ while running:
         for heart in heart_hud.hearts:
             heart.hidden = False
 
+        score_hud.sprite.hidden = False
+
         menu.state = "playing"
 
     if menu.state == "game_over":
@@ -239,6 +245,9 @@ while running:
 
             for heart in heart_hud.hearts:
                 heart.hidden = False
+
+            score = 0
+            score_hud.set_score(score)
 
             menu.state = "playing"
 
@@ -312,6 +321,7 @@ while running:
                     elif isinstance(hit_enemy, ShooterEnemy):
                         score += 20
 
+                    score_hud.set_score(score)
                     print(f"score: {score}")
 
                     continue
