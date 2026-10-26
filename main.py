@@ -147,6 +147,9 @@ max_health = 3
 health = max_health
 heart_hud = heart_hud.HeartHUD(scene, max_health)
 
+for heart in heart_hud.hearts:
+    heart.hidden = True
+
 while running:
     dt = clock.tick(60) / 1000
     print(f"FPS: {clock.get_fps(): 1f}", end="\r")
@@ -183,6 +186,9 @@ while running:
         player.sprite.hidden = False
         reticle.circle.hidden = False
         reticle.dot.hidden = False
+
+        for heart in heart_hud.hearts:
+            heart.hidden = False
 
         menu.state = "playing"
 
