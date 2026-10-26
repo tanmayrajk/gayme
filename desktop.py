@@ -10,6 +10,8 @@ W = 128
 H = 128
 SCALE = 2
 
+displayio.release_displays()
+
 display = PyGameDisplay(
     width=W * SCALE,
     height=H * SCALE,
@@ -41,11 +43,14 @@ def load_background(path):
 
     return displayio.TileGrid(bitmap, pixel_shader=palette)
 
-background = load_background("assets/desktop-bg.png")
+background = load_background("assets/desktop.png")
 scene.append(background)
 
 def make_clock(text):
-    font = ImageFont.load_default()
+    font = ImageFont.truetype(
+        "assets/Tiny5-Regular.ttf",
+        16
+    )
     bbox = font.getbbox(text)
 
     width = bbox[2] - bbox[0]
@@ -105,7 +110,3 @@ while running:
     time.sleep(0.05)
 
 pygame.quit()
-
-# hi i am going to kill myself very very soon
-#
-# asdfasd
